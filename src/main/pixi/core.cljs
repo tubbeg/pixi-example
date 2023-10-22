@@ -8,7 +8,6 @@
    [cljs.core.async :refer [go]] 
    [cljs.core.async.interop :refer-macros [<p!]]))
 
-(defn initFn [] (println "application started"))
 
 (def bdy (.-body js/document))
 
@@ -41,14 +40,15 @@
 
 
 (defn addRote [c]
-  (fn [delta]
-  ;(println "delta is" delta)
-  (let [oldRote (. c -rotation)
-        newRote (- oldRote (* delta (- 0 0.005)))]
-    (set! (. c -rotation) newRote))))
+  (fn [delta] 
+    (let [oldRote (. c -rotation) 
+          newRote (- oldRote (* delta (- 0 0.005)))] 
+      (set! (. c -rotation) newRote))))
 
 (defn startPixi []
   (go
+    ;note that loading assets is asynchronous, which is
+    ;why we use <p! and go
     (let [t (<p! (loadAsset p1))
           bunny (createSprite t)
           c (-> (new Container)
@@ -58,4 +58,6 @@
       (addToTicker (addRote c)))))
 
 
-(startPixi)
+(defn initFn []
+  (println "application started")
+  (startPixi))
